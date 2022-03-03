@@ -2,6 +2,28 @@
 
 This is the repository for (LINK PAPER)
 
+(https://https://github.com/MarcMoesser/Protein-Ligand-Interaction-Graphs/tree/main/publication/fig_2_PLIG_graphs/figure/fig_2.eps?raw=true)
+
+### Python Packages
+
+Install the needed python packages using conda with the following command:
+
+```
+conda env create -f torch_geo.yml
+```
+
+Alternatively, the following packages can be install manually (not preferred). Please make sure the correct version of PyTorch is installed!!! Other versions of PyTorch (eg. 1.10) will crash the models.
+
++ conda create --name torch_geo
++ conda install -c conda-forge rdkit=2021
++ conda install pyyaml
++ conda install pytorch=1.9.0 cpuonly -c pytorch 
++ conda install pytorch-geometric -c rusty1s -c conda-forge
++ conda install -c conda-forge optuna
++ conda install -c conda-forge gpytorch
++ conda install -c conda-forge tqdm
+
+
 ## 1) Create Protein-Ligand Interaction Graphs
 
 The code needed to generate PLIGs from a protein-ligand complex can be found in the "PLIG_tutorial/" folder.
