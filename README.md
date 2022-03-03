@@ -2,7 +2,7 @@
 
 This is the repository for (LINK PAPER)
 
-![PLIG](https://user-images.githubusercontent.com/57324636/156644563-3073e115-42ff-45cb-81fe-cd891e38f69b.svg)
+![PLIG](https://user-images.githubusercontent.com/57324636/156644947-34fffcd7-3f52-4922-a70c-ba3c97fda76d.png)
 
 ### Python Packages
 
