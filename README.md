@@ -2,7 +2,7 @@
 
 This is the repository for (LINK PAPER)
 
-(https://https://github.com/MarcMoesser/Protein-Ligand-Interaction-Graphs/tree/main/publication/fig_2_PLIG_graphs/figure/fig_2.eps?raw=true)
+![alt text](https://https://github.com/MarcMoesser/Protein-Ligand-Interaction-Graphs/tree/main/publication/fig_2_PLIG_graphs/figure/fig_2.eps?raw=true)
 
 ### Python Packages
 
