@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4c794aff-2a27-4c83-b8e1-0d3aeca12a8d" name="Changes" comment="README edit">
-      <change afterPath="$PROJECT_DIR$/models_main/README.md" afterDir="false" />
-    </list>
+    <list default="true" id="4c794aff-2a27-4c83-b8e1-0d3aeca12a8d" name="Changes" comment="README edit for model folder" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -115,7 +113,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646407309753</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="README edit for model folder">
+      <created>1646408299449</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1646408299449</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -137,6 +142,7 @@
     <MESSAGE value="Added PLIG generation tutorial" />
     <MESSAGE value="Added models, data and config files" />
     <MESSAGE value="README edit" />
-    <option name="LAST_COMMIT_MESSAGE" value="README edit" />
+    <MESSAGE value="README edit for model folder" />
+    <option name="LAST_COMMIT_MESSAGE" value="README edit for model folder" />
   </component>
 </project>
