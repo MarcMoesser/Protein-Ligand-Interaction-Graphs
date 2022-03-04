@@ -5,20 +5,7 @@ from math import sqrt
 from scipy import stats
 import torch.nn as nn
 
-from models.gat_hyper import GATNet_hyper
-from models.gat_gcn_hyper import GAT_GCN_hyper
-from models.gcn_hyper import GCNNet_hyper
-from models.ginconv_hyper import GINConvNet_hyper
-from models.SGConv_hyper import SGCNet_hyper
-from models.sage_conv_hyper import SageNet_hyper
-from models.mlp_hyper import MLPNet_hyper
-
 import torch.nn.functional as F
-
-
-model_dict_hyper = {"GINConvNet": GINConvNet_hyper, "GATNet": GATNet_hyper, "GAT_GCN": GAT_GCN_hyper, "GCNNet": GCNNet_hyper,
-                      "SGCNet": SGCNet_hyper,
-                      "SageNet": SageNet_hyper, "MLPNet": MLPNet_hyper}
 
 #get all the models
 from models.gat_PLIG_no_p import GATNet_PLIG_no_p
