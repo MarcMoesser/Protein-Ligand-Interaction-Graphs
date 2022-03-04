@@ -34,7 +34,7 @@ All GNN implementations of PLIGs as well as the MLPNet implementation of ECFP/FC
 The following data is supplied:
 ##### i) All hyperparameter tuned GNN PLIG, GNN ligand-based, MLPNet ECIF and MLPNet ECFP/FCFP models 
 ##### ii) Pre-prepared features (PLIGs, ECIF, ECFP/FCFP) for the PDBbind 2020 general + PDBbind 2016 refined set
-##### iii) an example config file needed for model training
+##### iii) All config files needed to train all model+feature combinations on crystal and docked poses.
 
 ## 3) Figures and data presented in the publication
 
