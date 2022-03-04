@@ -1,0 +1,37 @@
+preprocessing:
+  dataset_csv: "data/PDBbind/PDBbind_combined_casf_split_preprocessed.csv" # the csv file with the identifier, affinity, compound_iso_smiles, target_sequence, and dataset split ("split") into train, valid, test
+  
+  dataset: "PDBbind_combined" # String for naming purposes to identify dataset. In this work, the combined general2020 + refined2016 set is identified as "PDBbind_combined". Differenciation between docked vs crystal is decided from where PLIG or ECIF is loaded.
+  
+  atom_features: ["atom_symbol", "num_heavy_atoms", "total_num_Hs", "explicit_valence", "is_aromatic", "is_in_ring", "formal_charge", "hybridization_type"]  # Used to generate the PURELY ligand-based graphs. PLIGs are pre-processed. Ligand-based graphs are made directly with the "create_general_data.py" script as they are fast to generate.
+  
+  external_graph:
+    use: False # False / True -> Determine if graph will be loaded from pickled file.
+    path: "data/PDBBind/PDB_2016_crystal_casf_split_ECIG_6A_std.pickle" # Set the path to the graph file here, make sure it 		corresponds to either PDBbind crystal or PDBbind docked.
+    
+  protein:
+    protein_processing_type: "convolution" # from ["convolution", "no_protein"]. Will activate or deactivate the protein sequence CNN branch of the network 
+    max_seq_len: 1000 # length of amino acid vector, should be left unchanged
+    seq_voc: "ABCDEFGHIKLMNOPQRSTUVWXYZ" # vocabulary for amino acids, should be left unchanged
+  
+  fingerprints: # Only matter in combination with MLPNet. Should all be on "False" if running a GNN. Activate the FP as desired and give the path to the pre-generated pickle file.
+  
+    use_ECIF: False
+    use_ECFP512: False
+    use_ECFP1024: False
+    use_FCFP512: False
+    use_FCFP1024: False
+    FP_path: None #path to the pickle file that contains the FPs
+
+training:
+  path_model_to_load: "None" #"None" if new model is trained. If we want to continue training / load weights give path to the model in string format
+  model: "MLPNet_with_p" # Name of the model. Will be needed to load in correct model from the /model folder
+  dataset: "PDBBind_combined" # same as in preprocessing
+  params:
+    train_batch_size: 64 #constant
+    test_batch_size: 64 #constant
+    LR: 0.0002 #hyperparameter. Change this depending on network
+    log_interval: 10 #constant
+    n_epochs: 50 #hyperparameter. Change this depending on network
+    
+    metric: "pearson_correlation" # metric according to which best model is saved (w.r.t. test data), subset from ["RMSE", "MSE", "CI", "pearson_correlation", "spearman_correlation"]

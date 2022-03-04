@@ -1,0 +1,40 @@
+preprocessing:
+  atom_features:
+  - atom_symbol
+  - num_heavy_atoms
+  - total_num_Hs
+  - explicit_valence
+  - is_aromatic
+  - is_in_ring
+  - formal_charge
+  - hybridization_type
+  dataset: PDBbind_combined
+  dataset_csv: data/PDBBind/PDBbind_combined_casf_split_preprocessed.csv
+  external_graph:
+    path: None
+    use: false
+  fingerprints:
+    FP_path: data/PDBBind/PDBbind_combined_crystal_ECFP1024.pickle
+    special_ECIF: false
+    use_ECFP1024: true
+    use_ECFP512: false
+    use_ECIF: false
+    use_FCFP1024: false
+    use_FCFP512: false
+    use_MAPR: false
+  protein:
+    max_seq_len: 1000
+    protein_processing_type: no_protein
+    seq_voc: ABCDEFGHIKLMNOPQRSTUVWXYZ
+  use_graph: false
+training:
+  dataset: PDBbind_combined
+  model: MLPNet_ECFP1024_no_p
+  params:
+    LR: 0.0002
+    log_interval: 10
+    metric: pearson_correlation
+    n_epochs: 6
+    test_batch_size: 64
+    train_batch_size: 64
+  path_model_to_load: None
