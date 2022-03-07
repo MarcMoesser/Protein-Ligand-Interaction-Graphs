@@ -27,9 +27,9 @@ Alternatively, the following packages can be install manually (not preferred). P
 ## 1) Create Protein-Ligand Interaction Graphs
 
 The code needed to generate PLIGs from a protein-ligand complex can be found in the "PLIG_tutorial/" folder.
-## 2) Run a PLIG or MLPNet model
+## 2) Run a PLIG, ligand-based GNN or MLPNet model
 
-All GNN implementations of PLIGs as well as the MLPNet implementation of ECFP/FCFP and ECIF fingperints can be found in the "models_main/" folder.
+All GNN implementations of PLIGs, ligand-based GNNs, as well as the MLPNet implementation of ECFP/FCFP and ECIF fingperints can be found in the "models_main/" folder.
 
 The following data is supplied:
 ##### i) All hyperparameter tuned GNN PLIG, GNN ligand-based, MLPNet ECIF and MLPNet ECFP/FCFP models 
