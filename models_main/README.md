@@ -6,6 +6,7 @@ The "models" folder contains all models with already optimized hyperparameters (
 
 The "example_configs" folder contains the necessary config files to run the create_general_data.py and training.py scripts for all models as well as an example config file that uses a pre-trained model.
 
+The "PDBbind_combined_pdbcodes.txt" is a list of all 14981 PDB codes used
 ## How to use the code
 
 #### Installing packages
