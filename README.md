@@ -1,6 +1,6 @@
 # Protein-Ligand-Interaction-Graphs
 
-This is the repository for (LINK PAPER)
+This is the repository for https://www.biorxiv.org/content/10.1101/2022.03.04.483012v1?rss=1
 
 ![PLIG](https://user-images.githubusercontent.com/57324636/156644947-34fffcd7-3f52-4922-a70c-ba3c97fda76d.png)
 
