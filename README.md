@@ -38,4 +38,4 @@ The following data is supplied:
 
 ## 3) Figures and data presented in the publication
 
-All raw-data to generate the figure published in (LINK PAPER) can be found in the "publication" folder
+All raw-data to generate the figure published in https://www.biorxiv.org/content/10.1101/2022.03.04.483012v1?rss=1 can be found in the "publication" folder
