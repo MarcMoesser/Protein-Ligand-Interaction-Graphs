@@ -111,7 +111,7 @@ processed_data_file_train = 'data/processed/' + dataset + '_train.pt'
 processed_data_file_valid = 'data/processed/' + dataset + '_valid.pt'
 processed_data_file_test = 'data/processed/' + dataset + '_test.pt'
 
-df = pd.read_csv('data/' + dataset + '_train.csv')
+df = train_df
 train_idx, train_prots, train_Y = list(df['Identifier']), list(df['target_sequence']), list(df['affinity'])
 train_prots_ls = list(set(train_prots))
 if config["preprocessing"]["protein"]["protein_processing_type"] == "one_hot_encoding":
@@ -122,7 +122,7 @@ else:
     train_idx, train_prots, train_Y = np.asarray(train_idx), np.asarray(XT), np.asarray(train_Y)
 
 
-df = pd.read_csv('data/' + dataset + '_valid.csv')
+df = valid_df
 valid_idx, valid_prots, valid_Y = list(df['Identifier']), list(df['target_sequence']), list( #-> MARC Identifier)
     df['affinity'])
 if config["preprocessing"]["protein"]["protein_processing_type"] == "one_hot_encoding":
@@ -132,7 +132,7 @@ else:
     XT = [seq_cat(t, config) for t in valid_prots]
     valid_idx, valid_prots, valid_Y = np.asarray(valid_idx), np.asarray(XT), np.asarray(valid_Y)
 
-df = pd.read_csv('data/' + dataset + '_test.csv')
+df = test_df
 test_idx, test_prots, test_Y = list(df['Identifier']), list(df['target_sequence']), list( #-> MARC (Identifier)
     df['affinity'])
 if config["preprocessing"]["protein"]["protein_processing_type"] == "one_hot_encoding":

@@ -286,7 +286,7 @@ class TestbedDataset(InMemoryDataset):
         torch.save((data, slices), self.processed_paths[0])
 
 
-class  FPDataset(Dataset):
+class FPDataset(Dataset):
     """
     class handling the dataset for MLPs (i.e. fingerprint methods)
     """
