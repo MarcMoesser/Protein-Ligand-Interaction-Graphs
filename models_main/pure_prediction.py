@@ -37,45 +37,40 @@ else:
     is_GNN = True
     print("using GNN")
 if is_GNN:
-    ref_data = TestbedDataset(root='data', dataset= 'reference_train', y_scaler=None)
-    test_data = TestbedDataset(root='data', dataset=dataset + '_test', y_scaler=ref_data.y_scaler)
+
+    test_data = TestbedDataset(root='data', dataset=dataset + '_test', y_scaler=None)
     # make data PyTorch mini-batch processing ready
 
     test_loader = DataLoader(test_data, batch_size=test_batch_size, shuffle=False)
 else:
-    ref_data = FPDataset(pd_dir=os.path.join("data/reference/reference_train.csv"), config=config,
-                            list_training_proteins=None, y_scaler=None)
+
 
     test_data = FPDataset(pd_dir=os.path.join("data", dataset + "_test.csv"), config=config,
-                            list_training_proteins=ref_data.get_encoded_proteins(), y_scaler=ref_data.y_scaler)
+                            list_training_proteins=None, y_scaler=None)
 
     test_loader = DL(test_data, batch_size=test_batch_size, shuffle=False, collate_fn=collate_fn)
 
 protein_processing_type = config["preprocessing"]["protein"]["protein_processing_type"]
-num_features_xt = ref_data.get_len_protein_encoding() #changed train_data to test_data
+num_features_xt = test_data.get_len_protein_encoding() #changed train_data to test_data
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 if is_GNN:
-    model = modeling(num_features_xd = ref_data.num_node_features,  num_features_xt=num_features_xt, protein_processing_type=protein_processing_type) #changed train_data to ref_data
+    model = modeling(num_features_xd = test_data.num_node_features,  num_features_xt=num_features_xt, protein_processing_type=protein_processing_type) #changed train_data to test data
 else:
-    model = modeling(num_features_xd = ref_data.get_len_ligand_encoding(), num_features_xt=num_features_xt, protein_processing_type=protein_processing_type) #changed train_data to Ref_data
+    model = modeling(num_features_xd = test_data.get_len_ligand_encoding(), num_features_xt=num_features_xt, protein_processing_type=protein_processing_type) #changed train_data to test_data
 
 model.load_state_dict(torch.load(config["pure_prediction"]["path_to_model"]))
 pretrained_model_filename = os.path.basename(config["pure_prediction"]["path_to_model"])
 print("Model was loaded from ", config["pure_prediction"]["path_to_model"])
 
 # initialize tensors to save results into
-#total_preds_train = torch.Tensor()
-#total_labels_train = torch.Tensor()
-#total_preds_valid = torch.Tensor()
-#total_labels_valid = torch.Tensor()
 total_preds_test = torch.Tensor()
 total_labels_test = torch.Tensor()
 
 with torch.no_grad():
     # compute performance on test data
     print('Make prediction for {} samples...'.format(len(test_loader.dataset)))
-    y_scaler = ref_data.y_scaler
+    y_scaler = None
     for data in test_loader:
         if is_GNN:
             data = data.to(device)
@@ -91,8 +86,8 @@ with torch.no_grad():
             total_preds_test = torch.cat((total_preds_test, output.cpu()), 0)
             total_labels_test = torch.cat((total_labels_test, data[2].cpu()), 0)
 
-    G_test = y_scaler.inverse_transform(total_labels_test.numpy().flatten())
-    P_test = y_scaler.inverse_transform(total_preds_test.numpy().flatten())
+    G_test = total_labels_test.numpy().flatten()
+    P_test = total_preds_test.numpy().flatten()
 
     ret_test = {"RMSE": str(rmse(G_test, P_test)), "MSE": str(mse(G_test, P_test)),
                 "pearson_correlation": str(pearson(G_test, P_test)),

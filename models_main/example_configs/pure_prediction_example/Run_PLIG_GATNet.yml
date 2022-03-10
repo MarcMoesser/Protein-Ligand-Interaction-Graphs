@@ -1,0 +1,35 @@
+preprocessing: #preprocessing the dataset you want to run your pretrained model on
+  atom_features:
+  - atom_symbol
+  - num_heavy_atoms
+  - total_num_Hs
+  - explicit_valence
+  - is_aromatic
+  - is_in_ring
+  - formal_charge
+  - hybridization_type
+  dataset: YOUR_SET
+  dataset_csv: data/LOC-OF-YOUR-SET 
+  external_graph:
+    path: data/LOC-OF-YOUR-GRAPHS
+    use: true
+  fingerprints:
+    FP_path: None # OR <data/LOC-OF-YOUR-FPs>
+    special_ECIF: false
+    use_ECFP1024: false
+    use_ECFP512: false
+    use_ECIF: false
+    use_FCFP1024: false
+    use_FCFP512: false
+    use_MAPR: false
+  protein:
+    max_seq_len: 1000
+    protein_processing_type: no_protein
+    seq_voc: ABCDEFGHIKLMNOPQRSTUVWXYZ
+  use_graph: true
+  
+
+pure_prediction:
+  dataset: YOUR_SET
+  path_to_model: ./output/trained_models/example_model/20211201-152343_model_GATNet_PLIG_no_p_6A_10_PDBbind_combined.model # This is the location of the model with pre-trained weights you want to load in
+  test_batch_size: 64

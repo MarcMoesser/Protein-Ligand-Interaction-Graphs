@@ -11,7 +11,7 @@ preprocessing: #preprocessing the dataset you want to run your pretrained model 
   dataset: PDBbind_combined
   dataset_csv: data/PDBBind_docked/PDBbind_combined_casf_split_preprocessed.csv 
   external_graph:
-    path: data/PDBBind_docked/PDBbind_combined_docked_ECIG_6A_std.pickle
+    path: data/PDBBind_docked/PDBbind_combined_docked_PLIG_6A_std.pickle
     use: true
   fingerprints:
     FP_path: None
