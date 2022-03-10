@@ -41,5 +41,9 @@ The training.py script will output 3 files total. A .model file will be deposite
 If instead of training a new model, you want to test the performance of a pre-trained model on a new dataset, use the pure_prediction.py script. 
 To run it:
 ```
+python create_general_data_pure_prediction.py <configuration file>
+```
+
+```
 python pure_prediction <pure_prediction configuration file>
 ```
