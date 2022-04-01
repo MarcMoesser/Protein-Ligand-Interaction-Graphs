@@ -46,7 +46,7 @@ else:
 
 
     test_data = FPDataset(pd_dir=os.path.join("data", dataset + "_test.csv"), config=config,
-                            list_training_proteins=None, y_scaler=None)
+                            list_training_proteins=None, y_scaler=test_data.y_scaler)
 
     test_loader = DL(test_data, batch_size=test_batch_size, shuffle=False, collate_fn=collate_fn)
 
@@ -70,7 +70,7 @@ total_labels_test = torch.Tensor()
 with torch.no_grad():
     # compute performance on test data
     print('Make prediction for {} samples...'.format(len(test_loader.dataset)))
-    y_scaler = None
+    y_scaler = test_data.y_scaler
     for data in test_loader:
         if is_GNN:
             data = data.to(device)
@@ -86,8 +86,8 @@ with torch.no_grad():
             total_preds_test = torch.cat((total_preds_test, output.cpu()), 0)
             total_labels_test = torch.cat((total_labels_test, data[2].cpu()), 0)
 
-    G_test = total_labels_test.numpy().flatten()
-    P_test = total_preds_test.numpy().flatten()
+    G_test = y_scaler.inverse_transform(total_labels_test.numpy().flatten())
+    P_test = y_scaler.inverse_transform(total_preds_test.numpy().flatten())
 
     ret_test = {"RMSE": str(rmse(G_test, P_test)), "MSE": str(mse(G_test, P_test)),
                 "pearson_correlation": str(pearson(G_test, P_test)),
