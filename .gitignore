@@ -1,6 +1,0 @@
-.gitignore
-.idea/
-.results-checkpoint.ipynb/
-__pycache__/
-**/.ipynb_checkpoints/
-FashionMNIST/
