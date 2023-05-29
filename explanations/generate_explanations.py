@@ -1,72 +1,77 @@
 # imports
 import sys
 import os
-
-import yaml
-from utils import TestbedDataset 
-from helpers import *
 import pandas as pd
-
-from explain_utils.gnn_explainer  import GNNExplainer
-from explain_utils.explainable_model import GATNet_PLIG_no_p
 from tqdm import tqdm
+import torch
+from torch_geometric import data as DATA 
+import pickle
+import numpy as np
+from sklearn.preprocessing import StandardScaler
 
-from rdkit import Chem
-from explain_utils.aggr_edge_directions import aggregate_edge_directions
+cwd_folder = os.getcwd().split('/')[-1]
+assert cwd_folder == 'explanations', f"Run this program from the 'explanations' folder, currentyly at {os.getcwd()}"
 
-# # %% TESTING CELL ONLY
-# with open("GATNet_config.yml", "r") as ymlfile:
-#     config = yaml.load(ymlfile, Loader=yaml.FullLoader)
+from explanation_utils.gnn_explainer  import GNNExplainer
+from example_model.x_gat_PLIG_no_p import GATNet_PLIG_no_p
+from explanation_utils.aggr_edge_directions import aggregate_edge_directions
 
-# test_df = pd.read_csv(os.path.join("data", "PDBbind_combined_test.csv"))
-# pdb_id = "5dwr".lower()
-# assert pdb_id in list(test_df["Identifier"])
-# num_explanations = 10
+
+def create_graph(pdb_id, PLIG_data, PDBbind_combined_csv):
+    # get general info from csv
+    df = PDBbind_combined_csv.loc[PDBbind_combined_csv['Identifier'] == pdb_id] 
+    y = df['affinity'].item()
+    smiles = df['compound_iso_smiles'].item()
+    split = df['split'].item()
+    # get PLIG from pickled file
+    features = PLIG_data[pdb_id][1]
+    edge_index = PLIG_data[pdb_id][2]
+    graph = DATA.Data(x=torch.Tensor(features),
+                    edge_index=torch.LongTensor(edge_index).transpose(1, 0),
+                    y=torch.FloatTensor([y]),
+                    smiles=smiles,
+                    pdb_id=pdb_id,
+                    split=split)
+    return graph
 
 def main():
-    # process arguments
-    with open(sys.argv[1], "r") as ymlfile:
-        config = yaml.load(ymlfile, Loader=yaml.FullLoader)
+    # load data
+    path_to_model = 'example_model/GATNet.model'
+    PLIG_data = pickle.load(open('../models_main/data/PDBBind/PDBbind_combined_crystal_PLIG_6A_std.pickle', 'rb'))
+    PDBbind_combined_csv = pd.read_csv('../models_main/data/PDBBind/PDBbind_combined_casf_split_preprocessed.csv',
+        index_col=0)
+    model = GATNet_PLIG_no_p(num_features_xd = 27, protein_processing_type='no_protein')
+    model.load_state_dict(torch.load(path_to_model))
 
-    test_df = pd.read_csv(os.path.join("data", "PDBbind_combined_test.csv"))
-    pdb_id = sys.argv[2].lower() 
-    assert pdb_id in list(test_df["Identifier"]), f"{pdb_id} not in test set" 
-    if len(sys.argv) >= 4:
-        num_explanations = int(sys.argv[3])
+    # process arguments / choose pdb_id
+    pdb_id = sys.argv[1].lower() 
+    assert pdb_id in PDBbind_combined_csv['Identifier'].values, f"{pdb_id} not in dataset" 
+    if len(sys.argv) >= 3:
+        num_explanations = int(sys.argv[2])
         assert num_explanations > 0, "Explain at least once."
     else:
         num_explanations = 1
-    if len(sys.argv) >= 5:
-        note = sys.argv[4]
+    if len(sys.argv) >= 4:
+        note = sys.argv[3] # appended to explanations file/folder name
     else:
         note = ""
+    
+    # get graph
+    graph = create_graph(pdb_id, PLIG_data, PDBbind_combined_csv)
 
-    # load test_set
-    dataset = config["pure_prediction"]["dataset"]
-
-    test_data = TestbedDataset(root='data', dataset=dataset + '_test', y_scaler=None) # changed from train_data.y_scaler to none
-
-    protein_processing_type = config["preprocessing"]["protein"]["protein_processing_type"]
-    num_features_xt = test_data.get_len_protein_encoding() # changed train_data to test_data
-    model = GATNet_PLIG_no_p(num_features_xd = test_data.num_node_features, num_features_xt=num_features_xt, protein_processing_type=protein_processing_type)
-
-    model.load_state_dict(torch.load(config["pure_prediction"]["path_to_model"]))
-    print("Model training data was loaded from ", config["pure_prediction"]["path_to_model"])
-
-
-    # get graph and smiles from pdb_id
-    graph = None
-    for g in test_data:
-        if g.pdb_id == pdb_id:
-            graph = g
-    smiles = test_df.loc[test_df["Identifier"] == pdb_id]["compound_iso_smiles"].iloc[0]
+    # scale values
+    assert graph.split in ['train', 'valid', 'test'], f"Unexpected datasplit: {graph.split}"
+    y_data_test = PDBbind_combined_csv.loc[PDBbind_combined_csv['split']=='test']
+    y_data_test = np.array(y_data_test['affinity']).reshape(-1, 1)
+    y_scaler_test = StandardScaler()
+    y_scaler_test.fit(y_data_test)
+    y_scaler = y_scaler_test
 
     # calculate prediction
-    y_scaler = test_data.y_scaler
     model.eval()
     pred = model(graph.x, graph.edge_index,torch.zeros(graph.x.shape[0], dtype=int, device=graph.x.device))
-    pred = y_scaler.inverse_transform(pred.detach().numpy()).item()
-    label = y_scaler.inverse_transform(graph.y.unsqueeze(0).numpy()).item()
+    pred = y_scaler.inverse_transform(np.array([pred.item()]).reshape(-1,1)).item()
+    label = graph.y.item()
     print(f"Model predicted a value of [{pred:.4f}] for label [{label:.4f}] on {pdb_id.upper()}.")
 
     # get atoms, bonds and features
@@ -76,12 +81,10 @@ def main():
                 'C;5;3;0;0;0', 'S;2;1;1;0;0', 'C;4;2;1;1;1', 'C;4;3;0;1;1', 'N;3;2;0;1;1',
                 'N;3;2;1;1;1', 'N;4;1;3;0;0', 'S;2;2;0;0;0', 'C;4;3;1;0;1', 'C;4;2;2;0;1',
                 'N;3;3;0;0;1', 'O;2;1;1;0;0'] 
-    mol = Chem.MolFromSmiles(smiles)
-    atoms = [x for x in range(mol.GetNumAtoms())]
 
     # create df_info
     df_info = pd.DataFrame({"PDB_ID": [pdb_id],
-                            "SMILES": [smiles],
+                            "SMILES": [graph.smiles],
                             "Label": [label],
                             "Prediction": [pred],
                             "Explanations": [num_explanations]}).transpose()
@@ -170,8 +173,7 @@ def main():
         df_indiv_edge_masks["indiv_edge_masks_std"] = [x.item() for x in indiv_edge_masks_std]
 
     # save data to csv 
-            # timestr = time.strftime("%Y%m%d-%H%M%S")
-    save_dir = pdb_id+"_"+str(num_explanations)+"_explanations"+note
+    save_dir = "explanation_outputs/"+pdb_id+"_"+str(num_explanations)+"_explanations"+note
     try:
         os.makedirs(save_dir)
     except: pass
@@ -194,5 +196,5 @@ def main():
 
 # entry point
 if __name__ == "__main__":
-    # arguments: [config file, pdb_id, num_averaged_explanations(optional)]
+    # arguments: [pdb_id, num_averaged_explanations(optional)]
     main()
