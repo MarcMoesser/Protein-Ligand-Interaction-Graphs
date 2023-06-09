@@ -5,26 +5,17 @@ import pandas as pd
 
 # set data file
 pdb_id = "5dwr"
-# pdb_id = "3o9i"
 
 # some hints
 print(f"\nShowing '{pdb_id}'")
 
 # locate data / set variables
-if pdb_id == "5dwr":
-    ligand_file = "5dwr_ligand.mol2"
-    protein_file = "5dwr_protein.pdb"
-    node_mask_file = "5dwr_100_explanations/node_masks.csv"
-    edge_mask_file = "5dwr_100_explanations/node_edge_masks_aggr.csv"
-    ligand_name = ligand_file.split(".")[0]
-    protein_name = protein_file.split(".")[0]
-elif pdb_id == "3o9i":
-    ligand_file = "3o9i_ligand.mol2"
-    protein_file = "3o9i_protein.pdb"
-    node_mask_file = "3o9i_100_explanations/node_masks.csv"
-    edge_mask_file = "3o9i_100_explanations/node_edge_masks_aggr.csv"
-    ligand_name = ligand_file.split(".")[0]
-    protein_name = protein_file.split(".")[0]
+ligand_file = "../explainable_ligands/5dwr_ligand.mol2"
+protein_file = "5dwr_protein.pdb"
+node_mask_file = "../explanation_outputs/5dwr_100_explanations/node_masks.csv"
+edge_mask_file = "../explanation_outputs/5dwr_100_explanations/node_edge_masks_aggr.csv"
+ligand_name = pdb_id+'_ligand'
+protein_name = pdb_id+'_protein'
 
 # delete previos visualization
 cmd.reinitialize()
@@ -68,48 +59,21 @@ cmd.hide("nonbonded", f"{protein_name}")
 cmd.hide("sticks", f"{protein_name} and ele h and not (neighbor (ele n+o))") 
 
 ### HARDCODED ### show interacting waters and backbone
-if pdb_id == "5dwr":
-    interacting_waters = ["/5dwr_protein///HOH`97/O", "/5dwr_protein///HOH`112/O", "/5dwr_protein///HOH`1/O"] # INTERACTING WATERS
-    cmd.select("interacting_waters", " or ".join(interacting_waters)) # INTERACTING WATERS
-    cmd.show("nb_spheres", "interacting_waters") # INTERACTING WATERS
-    interacting_backbone = ["A/GLU`171/O", "A/GLU`171/C", "A/GLU`171/CA", "A/ASP`186/N", "A/ASP`186/CA", 
-                            "A/ASP`186/H", "A/PHE`187/H", "A/PHE`187/N", "A/PHE`187/CA"]
-    interacting_sidechain = ["/5dwr_protein//A/GLU`89/OE2"]
-    cmd.select("interacting_backbones", " or ".join(interacting_backbone), enable=1)
-    cmd.create("interacting_bb", "interacting_backbones")
-    cmd.util.cbab("interacting_bb")
-    cmd.set("cartoon_gap_cutoff", 0)
-    cmd.set("cartoon_side_chain_helper", 0, "interacting_bb")
-    cmd.delete("interacting_backbones")
-    cmd.dist("h_bonds2", "interacting_waters", " or ".join(interacting_waters+interacting_backbone+interacting_sidechain), mode=2) # INTERACTING WATERS
-    cmd.hide("labels", "h_bonds2") # INTERACTING WATERS
+interacting_waters = ["/5dwr_protein///HOH`97/O", "/5dwr_protein///HOH`112/O", "/5dwr_protein///HOH`1/O"] # INTERACTING WATERS
+cmd.select("interacting_waters", " or ".join(interacting_waters)) # INTERACTING WATERS
+cmd.show("nb_spheres", "interacting_waters") # INTERACTING WATERS
+interacting_backbone = ["A/GLU`171/O", "A/GLU`171/C", "A/GLU`171/CA", "A/ASP`186/N", "A/ASP`186/CA", 
+                        "A/ASP`186/H", "A/PHE`187/H", "A/PHE`187/N", "A/PHE`187/CA"]
+interacting_sidechain = ["/5dwr_protein//A/GLU`89/OE2"]
+cmd.select("interacting_backbones", " or ".join(interacting_backbone), enable=1)
+cmd.create("interacting_bb", "interacting_backbones")
+cmd.util.cbab("interacting_bb")
+cmd.set("cartoon_gap_cutoff", 0)
+cmd.set("cartoon_side_chain_helper", 0, "interacting_bb")
+cmd.delete("interacting_backbones")
+cmd.dist("h_bonds2", "interacting_waters", " or ".join(interacting_waters+interacting_backbone+interacting_sidechain), mode=2) # INTERACTING WATERS
+cmd.hide("labels", "h_bonds2") # INTERACTING WATERS
 
-    # phosphorus containing amino acid <== modified residue from SER
-    # cmd.select("odd_aa", "byres /5dwr_protein//A/SEP`261/CA", enable=0)
-    # cmd.set("cartoon_side_chain_helper", 0, "odd_aa")
-    # cmd.show("sticks", "odd_aa")
-    # cmd.util.cbaw("odd_aa")
-elif pdb_id == "3o9i":
-    interacting_waters = ["/3o9i_protein///HOH`48/O"] # INTERACTING WATER
-    cmd.select("interacting_waters", " or ".join(interacting_waters)) # INTERACTING WATER
-    cmd.show("nb_spheres", "interacting_waters") # INTERACTING WATER
-    interacting_backbone = ["/3o9i_protein//A/ILE`50/N", "/3o9i_protein//A/ILE`50/H", "/3o9i_protein//A/ILE`50/CA",
-                            "/3o9i_protein//B/ILE`50/N", "/3o9i_protein//B/ILE`50/H", "/3o9i_protein//B/ILE`50/CA",
-                            "/3o9i_protein//A/ASP`29/N", "/3o9i_protein//A/ASP`29/H", "/3o9i_protein//A/ASP`29/CA",
-                            "/3o9i_protein//A/ASP`30/N", "/3o9i_protein//A/ASP`30/H", "/3o9i_protein//A/ASP`30/CA",
-                            "/3o9i_protein//B/ASP`30/N", "/3o9i_protein//B/ASP`30/H", "/3o9i_protein//B/ASP`30/CA",
-                            "/3o9i_protein//A/GLY`27/O", "/3o9i_protein//A/GLY`27/C", "/3o9i_protein//A/GLY`27/CA"]
-    interacting_sidechain = []
-    cmd.select("interacting_backbones", " or ".join(interacting_backbone), enable=1)
-    cmd.create("interacting_bb", "interacting_backbones")
-    cmd.util.cbab("interacting_bb")
-    cmd.set("cartoon_gap_cutoff", 0)
-    cmd.set("cartoon_side_chain_helper", 0, "interacting_bb")
-    cmd.delete("interacting_backbones")
-    # cmd.dist("h_bonds2", "interacting_waters", " or ".join(interacting_waters+interacting_backbone), mode=2) #+interacting_sidechain # INTERACTING WATER
-    cmd.dist("h_bonds2", "interacting_waters", " or ".join(interacting_waters+interacting_backbone+interacting_sidechain), mode=2) #+interacting_sidechain # INTERACTING WATER
-    cmd.hide("labels", "h_bonds2") # INTERACTING WATER
-    
 ### END HARDCODED ###
 
 # make list of atom indices
