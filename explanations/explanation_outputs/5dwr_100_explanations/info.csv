@@ -1,0 +1,5 @@
+PDB_ID,5dwr
+SMILES,[H]c1nc([H])c(N([H])C(=O)c2nc(-c3c(F)c([H])c([H])c([H])c3F)c(F)c([H])c2[H])c([C@]2([H])C([H])([H])[C@]([H])(C([H])([H])[H])C([H])([H])[C@]([H])([N+]([H])([H])[H])C2([H])[H])c1[H]
+Label,11.220000267028809
+Prediction,10.93703842163086
+Explanations,100
